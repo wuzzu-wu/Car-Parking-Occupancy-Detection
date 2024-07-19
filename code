@@ -1,0 +1,36 @@
+import cv2
+import numpy as np
+
+# Define parking lot layout (you can customize this)
+parking_lot = np.zeros((600, 800, 3), dtype=np.uint8)
+
+# Example: Draw parking spaces (You need to customize the coordinates)
+cv2.rectangle(parking_lot, (50, 50), (150, 150), (255, 255, 255), 2)  # Space 1
+cv2.rectangle(parking_lot, (200, 50), (300, 150), (255, 255, 255), 2)  # Space 2
+
+# Load an image of the parking lot
+image_path = 'C:\\Users\\Su Le\\Desktop\\CVn\\carpark.jpg'  # Update this path
+image = cv2.imread(image_path)
+
+if image is None:
+    print("Error: Image not found or path is incorrect")
+    exit()
+
+# Convert to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply thresholding to detect parking space
+_, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+
+# Find contours
+contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Draw contours
+for contour in contours:
+    x, y, w, h = cv2.boundingRect(contour)
+    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+# Show the result
+cv2.imshow('Detected Spaces', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
